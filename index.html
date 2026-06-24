@@ -277,7 +277,7 @@
     }
     .hero-headline {
       font-family: Georgia, serif;
-      font-size: clamp(28px, 4vw, 54px);
+      font-size: clamp(32px, 5.5vw, 54px);
       font-weight: normal; line-height: 1.07; letter-spacing: -0.025em;
       color: var(--text); margin-bottom: 22px;
       will-change: transform; transition: transform 0.3s ease;
@@ -645,6 +645,10 @@
       .footer-top    { grid-template-columns: 1fr; gap: 28px; }
       .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
       .hero-badge    { display: none; }
+      nav            { width: calc(100% - 24px); padding: 0 1rem; }
+      .section-inner { padding: 0 5vw; }
+      .hero-content  { padding: 0 5vw 60px; }
+      .team-card     { height: 260px; }
     }
   </style>
 </head>

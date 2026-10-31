@@ -1,0 +1,7 @@
+/lineup.html     /schedule/   301!
+/lineup          /schedule/   301!
+/films           /schedule/   301
+/films/*         /schedule/   301
+/schedule.html   /schedule/   301
+/team.html       /team/       301
+/premiere.html   /            301

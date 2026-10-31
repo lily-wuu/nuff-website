@@ -1,1241 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NUFF 2026 — Submit Your Film</title>
-  <style>
-
-    /* ═══════════════════════════════════
-       CSS CUSTOM PROPERTIES
-    ═══════════════════════════════════ */
-    :root {
-      --bg:        #1a1a1a;
-      --surface:   #222222;
-      --border:    rgba(255,255,255,0.08);
-      --text:      #f0ece4;
-      --muted:     rgba(240,236,228,0.55);
-      --purple:    #9B6BB5;
-      --purple-dk: #4E2A84;
-      --teal:      #1E9EAF;
-      --amber:     #F0B020;
-      --coral:     #E04545;
-      --pink:      #F08080;
-    }
-
-    /* ═══════════════════════════════════
-       RESET & BASE
-    ═══════════════════════════════════ */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: Helvetica, Arial, sans-serif;
-      line-height: 1.65;
-      overflow-x: hidden;
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior-y: none;
-    }
-    a { color: inherit; text-decoration: none; }
-    img { display: block; max-width: 100%; }
-    button { cursor: pointer; font-family: inherit; }
-
-    /* ═══════════════════════════════════
-       SCROLL REVEAL
-    ═══════════════════════════════════ */
-    .reveal {
-      opacity: 0;
-      transform: translateY(26px);
-      transition: opacity 0.35s ease, transform 0.35s ease;
-    }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-
-    /* ═══════════════════════════════════
-       ATMOSPHERE BLOBS
-    ═══════════════════════════════════ */
-    #atmosphere {
-      position: fixed; inset: 0; z-index: 0;
-      pointer-events: none; overflow: hidden;
-    }
-    .atmos-blob { position: absolute; border-radius: 50%; will-change: transform; }
-    .atmos-blob-1 {
-      width: 900px; height: 900px;
-      background: radial-gradient(circle, rgba(155,107,181,0.13) 0%, transparent 70%);
-      top: -320px; right: -200px;
-      animation: blobDrift1 28s ease-in-out infinite;
-    }
-    .atmos-blob-2 {
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, rgba(30,158,175,0.11) 0%, transparent 70%);
-      bottom: 10%; left: -120px;
-      animation: blobDrift2 34s ease-in-out infinite;
-    }
-    .atmos-blob-3 {
-      width: 420px; height: 420px;
-      background: radial-gradient(circle, rgba(240,176,32,0.07) 0%, transparent 70%);
-      top: 40%; right: 15%;
-      animation: blobDrift3 22s ease-in-out infinite;
-    }
-    .atmos-blob-4 {
-      width: 500px; height: 500px;
-      background: radial-gradient(circle, rgba(224,69,69,0.07) 0%, transparent 70%);
-      bottom: 30%; right: -80px;
-      animation: blobDrift4 40s ease-in-out infinite;
-    }
-    .atmos-blob-5 {
-      width: 340px; height: 340px;
-      background: radial-gradient(circle, rgba(240,128,128,0.08) 0%, transparent 70%);
-      top: 55%; left: 30%;
-      animation: blobDrift5 18s ease-in-out infinite;
-    }
-    @keyframes blobDrift1 {
-      0%,100% { transform: translate(0,0) scale(1); }
-      33%      { transform: translate(40px,-55px) scale(1.05); }
-      66%      { transform: translate(-30px,30px) scale(0.97); }
-    }
-    @keyframes blobDrift2 {
-      0%,100% { transform: translate(0,0) scale(1); }
-      40%      { transform: translate(55px,40px) scale(1.08); }
-      70%      { transform: translate(-20px,-35px) scale(0.95); }
-    }
-    @keyframes blobDrift3 {
-      0%,100% { transform: translate(0,0) scale(1); }
-      50%      { transform: translate(-45px,60px) scale(1.12); }
-    }
-    @keyframes blobDrift4 {
-      0%,100% { transform: translate(0,0); }
-      25%      { transform: translate(-40px,30px); }
-      75%      { transform: translate(50px,-20px); }
-    }
-    @keyframes blobDrift5 {
-      0%,100% { transform: translate(0,0) scale(1); }
-      50%      { transform: translate(30px,-50px) scale(1.1); }
-    }
-
-    /* ═══════════════════════════════════
-       NAV
-    ═══════════════════════════════════ */
-    nav {
-      position: fixed; top: 12px; left: 50%;
-      transform: translateX(-50%) perspective(1200px) translateZ(8px);
-      width: calc(100% - 48px); max-width: 1160px; height: 52px; z-index: 900;
-      background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 50%, rgba(255,255,255,0.07) 100%);
-      backdrop-filter: blur(48px) saturate(220%) brightness(1.08);
-      -webkit-backdrop-filter: blur(48px) saturate(220%) brightness(1.08);
-      border-radius: 22px; border: 1px solid rgba(255,255,255,0.18);
-      box-shadow: 0 6px 40px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.14) inset, 0 -1px 0 rgba(0,0,0,0.25) inset, 1px 0 0 rgba(255,255,255,0.07) inset, -1px 0 0 rgba(255,255,255,0.07) inset, 0 12px 60px rgba(155,107,181,0.06);
-      display: flex; align-items: center; justify-content: space-between; padding: 0 1.6rem;
-      outline: 1px solid rgba(155,107,181,0.08); outline-offset: -2px;
-    }
-    nav::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.38), transparent); border-radius: 999px; }
-    .nav-logo img { height: 34px; filter: invert(1); }
-    .nav-links { display: flex; align-items: center; gap: 2.4rem; list-style: none; }
-    .nav-links a { font-family: Helvetica, Helvetica, Arial, sans-serif; font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(240,236,228,0.6); transition: color 0.2s; position: relative; padding-bottom: 2px; }
-    .nav-links a:hover { color: rgba(240,236,228,0.9); }
-    .nav-links a.active { color: #fff; }
-    .nav-links a.active::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 1.5px; background: #fff; border-radius: 999px; }
-
-    /* ═══════════════════════════════════
-       HERO
-    ═══════════════════════════════════ */
-    #hero { position: relative; height: 100vh; min-height: 600px; overflow: hidden; }
-
-    .hero-bg {
-      position: absolute; inset: 0; z-index: 1;
-      background-image: url('hero-bg.jpg');
-      background-size: cover; background-position: center 30%;
-      will-change: transform;
-    }
-    .hero-bg::after {
-      content: ''; position: absolute; inset: 0;
-      background:
-        linear-gradient(to top,  rgba(20,14,28,0.97) 0%, rgba(20,14,28,0.55) 52%, rgba(20,14,28,0.20) 100%),
-        linear-gradient(to right, rgba(20,14,28,0.75) 0%, rgba(20,14,28,0.08) 65%);
-    }
-
-    /* Pure CSS 3D scene — no WebGL, no Three.js, no CDN */
-    .hero-3d-scene {
-      position: absolute; inset: 0; z-index: 2;
-      perspective: 1100px; perspective-origin: 50% 45%;
-      pointer-events: none; overflow: hidden;
-    }
-    .scene-stage {
-      position: absolute; inset: 0;
-      transform-style: preserve-3d;
-      will-change: transform;
-      transform: rotateX(0deg) rotateY(0deg) scale(1);
-    }
-    .s3d { position: absolute; }
-
-    /* Deep: radial-gradient orbs — no filter (filter breaks preserve-3d) */
-    .s-orb-purple {
-      width: 80vw; height: 80vw; border-radius: 50%;
-      background: radial-gradient(circle,
-        rgba(155,107,181,0.27) 0%, rgba(155,107,181,0.12) 22%,
-        rgba(155,107,181,0.04) 46%, transparent 66%);
-      top: -30vw; right: -20vw; transform: translateZ(-260px);
-    }
-    .s-orb-teal {
-      width: 55vw; height: 55vw; border-radius: 50%;
-      background: radial-gradient(circle,
-        rgba(30,158,175,0.20) 0%, rgba(30,158,175,0.08) 32%,
-        rgba(30,158,175,0.02) 56%, transparent 70%);
-      bottom: -15vw; left: -10vw; transform: translateZ(-190px);
-    }
-    .s-orb-coral {
-      width: 30vw; height: 30vw; border-radius: 50%;
-      background: radial-gradient(circle,
-        rgba(240,128,128,0.14) 0%, rgba(240,128,128,0.04) 46%, transparent 66%);
-      top: 28%; left: 18%; transform: translateZ(-140px);
-    }
-    /* Mid: geometric ring outlines */
-    .s-ring-lg {
-      width: 520px; height: 520px; border-radius: 50%;
-      border: 1px solid rgba(155,107,181,0.17);
-      top: 50%; left: 58%; margin-top: -260px; margin-left: -260px;
-      transform: translateZ(-95px);
-    }
-    .s-ring-md {
-      width: 260px; height: 260px; border-radius: 50%;
-      border: 1px solid rgba(30,158,175,0.22);
-      top: 12%; left: 10%; transform: translateZ(-55px);
-    }
-    .s-ring-sm {
-      width: 140px; height: 140px; border-radius: 50%;
-      border: 1px solid rgba(240,176,32,0.18);
-      bottom: 22%; right: 18%; transform: translateZ(-30px);
-    }
-    /* Mid: glass panels */
-    .s-panel-left {
-      width: clamp(180px,20vw,280px); height: clamp(110px,13vw,180px);
-      background: rgba(255,255,255,0.017);
-      border: 1px solid rgba(255,255,255,0.055); border-radius: 14px;
-      top: 16%; left: 4%; transform: translateZ(-68px) rotateY(-6deg);
-    }
-    .s-panel-right {
-      width: clamp(100px,13vw,180px); height: clamp(70px,9vw,130px);
-      background: rgba(155,107,181,0.04);
-      border: 1px solid rgba(155,107,181,0.11); border-radius: 10px;
-      bottom: 24%; right: 7%; transform: translateZ(-42px) rotateY(5deg);
-    }
-    /* Near: film-frame rectangle */
-    .s-frame {
-      width: clamp(260px,28vw,400px); height: clamp(160px,18vw,250px);
-      border: 1px solid rgba(255,255,255,0.07); border-radius: 3px;
-      top: 50%; left: 50%; margin-top: -125px; margin-left: -200px;
-      transform: translateZ(-18px);
-    }
-    .s-frame::before {
-      content: ''; position: absolute; inset: 8px;
-      border: 1px solid rgba(255,255,255,0.04); border-radius: 2px;
-    }
-    /* Near: diagonal accent lines */
-    .s-line-1 {
-      width: 1px; height: clamp(140px,22vh,240px);
-      background: linear-gradient(to bottom, transparent, rgba(155,107,181,0.32) 35%, rgba(155,107,181,0.32) 65%, transparent);
-      top: 8%; right: 24%; transform: translateZ(-6px) rotate(-16deg);
-    }
-    .s-line-2 {
-      width: 1px; height: clamp(100px,16vh,180px);
-      background: linear-gradient(to bottom, transparent, rgba(30,158,175,0.28) 35%, rgba(30,158,175,0.28) 65%, transparent);
-      bottom: 18%; left: 32%; transform: translateZ(8px) rotate(11deg);
-    }
-    .s-line-3 {
-      width: 80px; height: 1px;
-      background: linear-gradient(to right, transparent, rgba(240,176,32,0.35), transparent);
-      top: 38%; right: 14%; transform: translateZ(18px) rotate(-4deg);
-    }
-    /* Closest: glowing particle dots — box-shadow safe inside preserve-3d */
-    .s-dot-1 {
-      width: 5px; height: 5px; border-radius: 50%;
-      background: rgba(155,107,181,0.95);
-      box-shadow: 0 0 8px 3px rgba(155,107,181,0.50), 0 0 24px 10px rgba(155,107,181,0.18), 0 0 50px 20px rgba(155,107,181,0.06);
-      top: 28%; right: 30%; transform: translateZ(28px);
-    }
-    .s-dot-2 {
-      width: 4px; height: 4px; border-radius: 50%;
-      background: rgba(30,158,175,0.95);
-      box-shadow: 0 0 6px 2px rgba(30,158,175,0.55), 0 0 18px 8px rgba(30,158,175,0.18), 0 0 40px 16px rgba(30,158,175,0.06);
-      bottom: 34%; left: 42%; transform: translateZ(22px);
-    }
-    .s-dot-3 {
-      width: 3px; height: 3px; border-radius: 50%;
-      background: rgba(240,176,32,0.9);
-      box-shadow: 0 0 5px 2px rgba(240,176,32,0.45), 0 0 14px 6px rgba(240,176,32,0.14);
-      top: 45%; left: 22%; transform: translateZ(35px);
-    }
-
-    /* Hero content */
-    .hero-content {
-      position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
-      padding: 0 7vw 60px; max-width: 700px;
-      will-change: opacity;
-    }
-    .hero-eyebrow {
-      display: inline-block; font-family: Helvetica, Arial, sans-serif;
-      font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
-      color: var(--purple); margin-bottom: 18px;
-    }
-    .hero-headline {
-      font-family: Helvetica, Arial, sans-serif;
-      font-size: clamp(32px, 5.5vw, 54px);
-      font-weight: normal; line-height: 1.07; letter-spacing: -0.025em;
-      color: var(--text); margin-bottom: 22px;
-      will-change: transform; transition: transform 0.3s ease;
-    }
-    .hero-sub {
-      font-size: clamp(14px, 3.5vw, 17px); color: var(--muted);
-      max-width: 520px; margin-bottom: 34px; line-height: 1.72;
-    }
-    .hero-cta {
-      display: inline-flex; align-items: center; gap: 10px;
-      padding: 14px 30px; background: var(--purple); color: #fff;
-      border: none; border-radius: 6px; font-size: 15px;
-      font-family: Helvetica, Arial, sans-serif; font-weight: 700; letter-spacing: 0.02em;
-      transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
-    }
-    .hero-cta:hover { background: #b07dcc; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(155,107,181,0.35); }
-    .hero-cta:active { transform: translateY(0); }
-
-    .hero-badge {
-      position: absolute; bottom: 56px; right: 7vw; z-index: 3; text-align: right;
-    }
-    .hero-badge-label {
-      font-family: Helvetica, Arial, sans-serif; font-size: 10px;
-      letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px;
-    }
-    .hero-badge-date { font-size: 22px; color: var(--text); line-height: 1.15; }
-
-    /* NUFF Selection badge image */
-    .nuff-selection-img {
-      width: 150px; height: auto; display: block;
-      margin-left: auto; margin-bottom: 14px;
-      filter: drop-shadow(0 0 10px rgba(155,107,181,0.3));
-    }
-
-    .hero-scroll-hint {
-      position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
-      z-index: 3; display: flex; flex-direction: column; align-items: center;
-      gap: 5px; opacity: 0.38;
-    }
-    .hero-scroll-hint span {
-      font-family: Helvetica, Arial, sans-serif; font-size: 10px;
-      letter-spacing: 0.16em; text-transform: uppercase;
-    }
-    .scroll-bob { animation: scrollBob 2.4s ease-in-out infinite; }
-    @keyframes scrollBob {
-      0%,100% { transform: translateY(0); }
-      50%      { transform: translateY(5px); }
-    }
-
-    /* ═══════════════════════════════════
-       SHARED SECTION
-    ═══════════════════════════════════ */
-    .section-inner { max-width: 1160px; margin: 0 auto; padding: 0 7vw; }
-    .section-label {
-      font-family: Helvetica, Arial, sans-serif; font-size: 11px;
-      letter-spacing: 0.18em; text-transform: uppercase; color: var(--purple); margin-bottom: 14px;
-    }
-    .section-title {
-      font-size: clamp(24px, 5vw, 48px); font-weight: normal;
-      line-height: 1.12; letter-spacing: -0.02em; margin-bottom: 22px;
-    }
-    .section-divider { width: 48px; height: 2px; background: var(--purple); margin-bottom: 40px; opacity: 0.55; }
-
-    /* ═══════════════════════════════════
-       ABOUT
-    ═══════════════════════════════════ */
-    #about { position: relative; z-index: 10; padding: 96px 0 72px; border-bottom: 1px solid var(--border); }
-    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
-    .about-left p { color: var(--muted); font-size: 16px; margin-bottom: 18px; line-height: 1.75; }
-    .about-left p:last-child { margin-bottom: 0; }
-    .about-right { display: flex; flex-direction: column; gap: 14px; }
-    .about-stat {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 22px 24px; display: flex; gap: 18px; align-items: flex-start;
-    }
-    .about-stat-num { font-size: 34px; color: var(--purple); line-height: 1; min-width: 52px; }
-    .about-stat-text { color: var(--muted); font-size: 14px; line-height: 1.5; }
-    .about-stat-text strong { display: block; color: var(--text); font-size: 15px; margin-bottom: 3px; font-weight: normal; }
-
-    /* ═══════════════════════════════════
-       SUBMIT
-    ═══════════════════════════════════ */
-    /* ═══════════════════════════════════
-       AWARDS
-    ═══════════════════════════════════ */
-    #awards { position: relative; z-index: 10; padding: 96px 0 80px; border-bottom: 1px solid var(--border); }
-    .awards-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 12px;
-      margin-top: 44px;
-    }
-    .award-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px 18px;
-      transition: border-color 0.2s ease, transform 0.2s ease;
-    }
-    .award-card:hover { border-color: rgba(155,107,181,0.35); transform: translateY(-2px); }
-    .award-card-icon { font-size: 20px; margin-bottom: 10px; }
-    .award-card-name {
-      font-family: Helvetica, Arial, sans-serif; font-size: 15px;
-      color: var(--text); margin-bottom: 0;
-    }
-    .award-sponsor-note {
-      margin-top: 28px;
-      font-family: Helvetica, Arial, sans-serif; font-size: 13px;
-      color: var(--muted); display: flex; align-items: center; gap: 8px;
-    }
-    .award-sponsor-note::before {
-      content: ''; display: block; width: 28px; height: 1px;
-      background: rgba(155,107,181,0.5); flex-shrink: 0;
-    }
-
-    #submit { position: relative; z-index: 10; padding: 96px 0 80px; border-bottom: 1px solid var(--border); }
-    .submit-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 56px; align-items: start; }
-
-    .submit-details { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 34px; }
-    .submit-details li {
-      display: flex; gap: 14px; align-items: flex-start;
-      padding: 16px 18px; background: var(--surface);
-      border: 1px solid var(--border); border-radius: 10px;
-    }
-    .detail-icon {
-      flex-shrink: 0; width: 36px; height: 36px; border-radius: 8px;
-      background: rgba(155,107,181,0.10);
-      display: flex; align-items: center; justify-content: center; font-size: 17px;
-    }
-    .detail-body { flex: 1; }
-    .detail-label {
-      display: block; font-family: Helvetica, Arial, sans-serif; font-size: 10px;
-      letter-spacing: 0.14em; text-transform: uppercase; color: var(--purple); margin-bottom: 4px;
-    }
-    .detail-text { font-size: 14px; color: var(--text); line-height: 1.5; }
-    .detail-text small { color: var(--muted); font-size: 12.5px; }
-    .detail-text a { color: var(--teal); }
-
-    .submit-cta-wrap { display: flex; flex-direction: column; gap: 12px; }
-    .submit-cta-center {
-      max-width: 520px; margin: 0 auto 52px; text-align: center;
-    }
-    .btn-submit-wrap {
-      background: rgba(155,107,181,0.06); border: 1px solid rgba(155,107,181,0.2);
-      border-radius: 14px; padding: 22px 24px 18px; margin-bottom: 10px;
-    }
-    .btn-submit-label {
-      font-family: Helvetica, Arial, sans-serif; font-size: 10px; letter-spacing: 0.2em;
-      text-transform: uppercase; color: var(--purple); margin-bottom: 12px;
-      display: block; text-align: center;
-    }
-    .btn-submit {
-      display: flex; align-items: center; justify-content: center; gap: 12px;
-      width: 100%; padding: 20px 36px; background: var(--purple); color: #fff; border: none;
-      border-radius: 10px; font-size: 18px; font-family: Helvetica, Arial, sans-serif;
-      font-weight: 700; letter-spacing: 0.02em;
-      box-shadow: 0 4px 28px rgba(155,107,181,0.32), 0 0 0 1px rgba(155,107,181,0.18);
-      transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
-      cursor: pointer;
-    }
-    .btn-submit:hover { background: #b07dcc; transform: translateY(-2px); box-shadow: 0 12px 44px rgba(155,107,181,0.45), 0 0 0 1px rgba(155,107,181,0.3); }
-    .btn-submit:active { transform: translateY(0); }
-    .submit-note { font-family: Helvetica, Arial, sans-serif; font-size: 12px; color: var(--muted); }
-    .submit-note a { color: var(--teal); text-decoration: underline; text-underline-offset: 3px; }
-
-    .elig-header {
-      font-family: Helvetica, Arial, sans-serif; font-size: 11px; letter-spacing: 0.14em;
-      text-transform: uppercase; color: var(--muted); margin-bottom: 16px;
-    }
-    .elig-row {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 20px 22px; margin-bottom: 10px; cursor: default;
-      transform: perspective(600px) rotateX(var(--elig-rx,0deg)) rotateY(var(--elig-ry,0deg));
-      transition: transform 0.15s ease, border-color 0.2s ease;
-      will-change: transform;
-      background-image: radial-gradient(
-        circle at calc(50% + var(--elig-mx,0%)) calc(50% + var(--elig-my,0%)),
-        rgba(155,107,181,0.07), transparent 65%
-      );
-    }
-    .elig-row:hover { border-color: rgba(155,107,181,0.28); }
-    .elig-row-title {
-      font-size: 15px; color: var(--text); margin-bottom: 6px;
-      display: flex; align-items: center; gap: 10px;
-    }
-    .elig-row-title::before {
-      content: ''; display: inline-block; width: 5px; height: 5px;
-      border-radius: 50%; background: var(--purple); flex-shrink: 0;
-    }
-    .elig-row-body { color: var(--muted); font-size: 13.5px; line-height: 1.6; padding-left: 15px; }
-    .elig-not-sure {
-      margin-top: 18px; padding: 14px 16px;
-      background: rgba(30,158,175,0.07); border: 1px solid rgba(30,158,175,0.18);
-      border-radius: 8px; font-size: 13px; color: var(--muted);
-    }
-    .elig-not-sure a { color: var(--teal); }
-
-    .faq-wrap { margin-top: 72px; }
-    .faq-heading { font-size: clamp(20px,2.2vw,28px); font-weight: normal; color: var(--text); margin-bottom: 26px; }
-    .faq-list { display: flex; flex-direction: column; gap: 3px; }
-    details.faq-item {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px; overflow: hidden; transition: border-color 0.2s ease;
-    }
-    details.faq-item[open] { border-color: rgba(155,107,181,0.3); }
-    summary.faq-q {
-      list-style: none; display: flex; justify-content: space-between; align-items: center;
-      padding: 20px 22px; font-size: 15px; cursor: pointer; user-select: none;
-      color: var(--text); gap: 16px;
-    }
-    summary.faq-q::-webkit-details-marker { display: none; }
-    .faq-chevron {
-      flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
-      border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      transition: transform 0.22s ease, background 0.2s ease, border-color 0.2s ease;
-      font-size: 14px; color: var(--muted);
-    }
-    details[open] .faq-chevron {
-      transform: rotate(45deg); background: rgba(155,107,181,0.15);
-      border-color: rgba(155,107,181,0.3); color: var(--purple);
-    }
-    .faq-a {
-      padding: 16px 22px 20px; color: var(--muted); font-size: 14px;
-      line-height: 1.72; border-top: 1px solid var(--border);
-    }
-    .faq-a a { color: var(--teal); }
-    .faq-a strong { color: var(--text); font-weight: normal; }
-
-    /* ═══════════════════════════════════
-       TEAM
-    ═══════════════════════════════════ */
-    #team { position: relative; z-index: 10; padding: 96px 0 80px; border-bottom: 1px solid var(--border); }
-    .team-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-    .team-card { height: 320px; width: 100%; perspective: 600px; cursor: pointer; }
-    .team-card-inner {
-      width: 100%; height: 100%; position: relative;
-      transform-style: preserve-3d;
-      transition: transform 0.55s cubic-bezier(0.4,0,0.2,1); border-radius: 12px;
-    }
-    .team-card:hover .team-card-inner { transform: rotateY(180deg); }
-    .team-card-front, .team-card-back {
-      position: absolute; inset: 0;
-      backface-visibility: hidden; -webkit-backface-visibility: hidden;
-      border-radius: 12px; overflow: hidden;
-    }
-    .team-card-front {
-      background: var(--surface); border: 1px solid var(--border);
-      position: absolute; inset: 0; overflow: hidden; border-radius: 12px;
-    }
-    .team-card-front img {
-      width: 100%; height: 100%;
-      object-fit: cover; object-position: center top;
-      display: block;
-    }
-    .team-card-front-placeholder {
-      width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
-      font-size: 42px; color: rgba(255,255,255,0.15);
-    }
-    .team-card-back {
-      background: var(--surface); border: 1px solid rgba(155,107,181,0.22);
-      transform: rotateY(180deg);
-      display: flex; flex-direction: column; align-items: center;
-      justify-content: center; padding: 24px 18px; text-align: center; gap: 6px;
-    }
-    .team-card-back-name {
-      font-family: Helvetica, Arial, sans-serif; font-size: 16px; color: var(--text); font-weight: normal;
-    }
-    .team-card-role {
-      font-family: Helvetica, Arial, sans-serif; font-size: 12px; color: var(--purple);
-      letter-spacing: 0.04em; line-height: 1.5; text-transform: uppercase;
-    }
-
-    /* ═══════════════════════════════════
-       SCHEDULE
-    ═══════════════════════════════════ */
-    #schedule { position: relative; z-index: 10; padding: 96px 0 80px; border-bottom: 1px solid var(--border); }
-    .schedule-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 44px; }
-    .sched-day {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 14px; padding: 28px;
-      display: flex; flex-direction: column; gap: 10px;
-    }
-    .sched-day-num { font-size: 50px; color: var(--purple); line-height: 1; }
-    .sched-day-label { font-family: Helvetica, Arial, sans-serif; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
-    .sched-day-date { font-size: 18px; color: var(--text); }
-    .sched-venue { font-size: 14px; color: var(--muted); line-height: 1.55; }
-    .sched-venue strong { display: block; color: var(--text); font-size: 15px; margin-bottom: 3px; font-weight: normal; }
-    .sched-tbd {
-      display: inline-block; font-family: Helvetica, Arial, sans-serif; font-size: 10px;
-      letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber);
-      background: rgba(240,176,32,0.10); border: 1px solid rgba(240,176,32,0.22);
-      border-radius: 4px; padding: 2px 8px; margin-top: 5px;
-    }
-    .sched-times { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
-    .sched-time-row {
-      display: flex; gap: 10px; align-items: center;
-      font-family: Helvetica, Arial, sans-serif; font-size: 13px; color: var(--muted);
-    }
-    .sched-time-chip {
-      background: rgba(155,107,181,0.12); border: 1px solid rgba(155,107,181,0.2);
-      border-radius: 4px; padding: 2px 9px; font-size: 11px; color: var(--purple); flex-shrink: 0;
-    }
-    .sched-map { border-radius: 14px; overflow: hidden; border: 1px solid var(--border); height: 280px; }
-    .sched-map iframe { width: 100%; height: 100%; border: none; filter: invert(0.88) hue-rotate(200deg) saturate(0.45); }
-    .sched-map-note { margin-top: 10px; font-family: Helvetica, Arial, sans-serif; font-size: 12px; color: var(--muted); }
-
-    /* ═══════════════════════════════════
-       FOOTER
-    ═══════════════════════════════════ */
-    #footer { position: relative; z-index: 10; padding: 72px 0 44px; }
-    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 52px; }
-    .footer-brand-title { font-size: 20px; color: var(--text); }
-    .footer-brand p { color: var(--muted); font-size: 14px; line-height: 1.65; margin-top: 12px; max-width: 280px; }
-    .footer-col-title { font-family: Helvetica, Arial, sans-serif; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
-    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-    .footer-col a { font-size: 14px; color: var(--muted); transition: color 0.2s ease; }
-    .footer-col a:hover { color: var(--text); }
-    .footer-bottom {
-      display: flex; justify-content: space-between; align-items: center;
-      padding-top: 22px; border-top: 1px solid var(--border);
-      font-family: Helvetica, Arial, sans-serif; font-size: 12px; color: var(--muted);
-    }
-
-    /* ═══════════════════════════════════
-       CONFETTI
-    ═══════════════════════════════════ */
-    .confetti-piece {
-      position: fixed; width: 8px; height: 8px; border-radius: 2px;
-      pointer-events: none; z-index: 9999;
-      animation: confettiFly 1.4s ease forwards;
-      --tx: 0px; --ty: -100px; --rot: 360deg;
-    }
-    @keyframes confettiFly {
-      0%   { transform: translate(0,0) rotate(0deg); opacity: 1; }
-      80%  { opacity: 1; }
-      100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)); opacity: 0; }
-    }
-
-    /* ═══════════════════════════════════
-       PREFERS-REDUCED-MOTION
-    ═══════════════════════════════════ */
-    @media (prefers-reduced-motion: reduce) {
-      .atmos-blob      { animation: none !important; }
-      .scene-stage     { transition: none !important; }
-      .hero-headline   { transition: none !important; }
-      .elig-row        { transition: border-color 0.15s ease !important; transform: none !important; }
-      .team-card-inner { transition: none !important; }
-      .reveal          { transition: none !important; opacity: 1; transform: none !important; }
-      .confetti-piece  { animation: none !important; display: none !important; }
-      .scroll-bob      { animation: none !important; }
-    }
-
-    /* ═══════════════════════════════════
-       RESPONSIVE
-    ═══════════════════════════════════ */
-
-    /* iPad landscape + small desktop */
-    @media (max-width: 900px) {
-      .about-grid    { grid-template-columns: 1fr; gap: 36px; }
-      .submit-grid   { grid-template-columns: 1fr; }
-      .schedule-grid { grid-template-columns: 1fr; }
-      .footer-top    { grid-template-columns: 1fr 1fr; }
-      #about, #submit, #team, #schedule { padding: 72px 0 56px; }
-    }
-
-    /* iPad portrait */
-    @media (max-width: 768px) {
-      .team-grid     { grid-template-columns: repeat(2, 1fr); gap: 16px; }
-      .section-inner { padding: 0 6vw; }
-      .hero-content  { padding: 0 6vw 60px; }
-      nav            { width: calc(100% - 32px); }
-      .nav-links     { gap: 1.4rem; }
-      .submit-cta-center { max-width: 100%; }
-      .faq-heading   { font-size: clamp(18px, 3vw, 24px); }
-    }
-
-    /* Phone */
-    @media (max-width: 600px) {
-      .team-grid     { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-      .footer-top    { grid-template-columns: 1fr; gap: 28px; }
-      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
-      .hero-badge    { display: none; }
-      nav            { width: calc(100% - 24px); padding: 0 1rem; }
-      .nav-past-screenings { display: none; }
-      .nav-links     { gap: 1rem; }
-      .section-inner { padding: 0 5vw; }
-      .hero-content  { padding: 0 5vw 60px; }
-      .team-card     { height: 240px; }
-      #about, #submit, #team, #schedule { padding: 56px 0 44px; }
-      #footer        { padding: 48px 0 32px; }
-      .about-stat    { gap: 12px; }
-      .about-stat-num { font-size: 26px; min-width: 40px; }
-      .submit-cta-center { max-width: 100%; }
-      .atmos-blob    { display: none; }
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>NUFF 2026 | Nov 13–14</title>
+  <meta name="description" content="Join us at Northwestern for two days of short films, conversations, and emerging voices. November 13–14, 2026 · Evanston, IL">
+  <meta name="theme-color" content="#141116">
+  <meta name="color-scheme" content="dark">
+  <link rel="canonical" href="https://nufilmfest.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="NUFF — The Film Festival at Northwestern">
+  <meta property="og:title" content="NUFF 2026 | Nov 13–14">
+  <meta property="og:description" content="Join us at Northwestern for two days of short films, conversations, and emerging voices. November 13–14, 2026 · Evanston, IL">
+  <meta property="og:url" content="https://nufilmfest.com/">
+  <meta property="og:image" content="https://nufilmfest.com/assets/img/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="assets/img/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <script>(function(d){d.classList.add('js');setTimeout(function(){if(!d.classList.contains('reveal-ready'))d.classList.add('reveal-safe')},2500)})(document.documentElement);</script>
+  <script src="assets/js/site.js" defer></script>
 </head>
 <body>
-
-  <!-- ATMOSPHERE -->
-  <div id="atmosphere" aria-hidden="true">
-    <div class="atmos-blob atmos-blob-1"></div>
-    <div class="atmos-blob atmos-blob-2"></div>
-    <div class="atmos-blob atmos-blob-3"></div>
-    <div class="atmos-blob atmos-blob-4"></div>
-    <div class="atmos-blob atmos-blob-5"></div>
-  </div>
-
-  <!-- NAV — 2 links only -->
-  <nav role="navigation" aria-label="Main navigation">
-    <a href="index.html" class="nav-logo"><img src="nuff-logo.png" alt="NUFF" /></a>
+<a class="skip-link" href="#main">Skip to content</a>
+<header>
+  <nav class="site-nav glass" aria-label="Main">
+    <a class="nav-logo" href="./" aria-label="NUFF home"><img src="assets/img/nuff-logo-white.png" alt="NUFF" width="68" height="28"></a>
     <ul class="nav-links">
-      <li><a href="index.html" class="active">2026 Film Festival</a></li>
-      <li class="nav-past-screenings"><span style="font-family:'Arial',sans-serif;font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(240,236,228,0.3);cursor:default;">Past Screenings <span style="font-size:0.65rem;opacity:0.7;text-transform:none;letter-spacing:0;">coming soon</span></span></li>
+      <li><a href="schedule/" class="nav-cta">Schedule</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="team/">Team</a></li>
     </ul>
+    <div class="nav-mobile">
+      <a class="nav-cta" href="schedule/">Schedule</a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu-panel" aria-label="Open menu"><span class="menu-icon" aria-hidden="true"></span></button>
+    </div>
   </nav>
-
-  <!-- HERO -->
-  <section id="hero" aria-label="Hero">
-    <div class="hero-bg" role="img" aria-label="Cinematic background"></div>
-
-    <div class="hero-3d-scene" aria-hidden="true">
-      <div class="scene-stage" id="sceneStage"></div>
+  <div class="menu-panel glass" id="menu-panel" hidden>
+    <ul>
+      <li><a href="./" aria-current="page">Home</a></li>
+      <li><a href="schedule/">Schedule</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="team/">Team</a></li>
+    </ul>
+  </div>
+</header>
+<main id="main">
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-media">
+      <picture>
+        <source type="image/webp" srcset="assets/img/hero-800.webp 800w, assets/img/hero-1400.webp 1400w, assets/img/hero-2200.webp 2200w" sizes="100vw">
+        <img src="assets/img/hero-1400.jpg" alt="" width="1400" height="935" fetchpriority="high" decoding="async">
+      </picture>
     </div>
-
-    <div class="hero-content" id="heroContent">
-      <p class="hero-eyebrow">The Film Festival at Northwestern University</p>
-      <h1 class="hero-headline" id="heroHeadline">Made a film?<br>Bring it to <img src="nuff-logo.png" alt="NUFF" style="height:0.8em;filter:invert(1);vertical-align:middle;display:inline-block;margin-bottom:0.08em;" /> at Northwestern.</h1>
-      <p class="hero-sub">NUFF is Northwestern's student-led short film festival, open to all filmmakers nationwide regardless of experience. Submit and screen your work on the big screen this Fall.</p>
-      <button class="hero-cta" onclick="document.getElementById('submit').scrollIntoView({behavior:'smooth'})">
-        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
-          <path d="M7.5 2v9M4 7.5l3.5 3.5 3.5-3.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        Submit Your Film
-      </button>
-    </div>
-
-    <div class="hero-badge" aria-hidden="true">
-      <img src="nuff-selection-white.png" alt="NUFF Official Selection 2026" class="nuff-selection-img" />
-      <p class="hero-badge-label">Northwestern University</p>
-      <p class="hero-badge-date">Nov 13&ndash;14<br>2026</p>
-    </div>
-
-    <div class="hero-scroll-hint" aria-hidden="true">
-      <span>Scroll</span>
-      <svg class="scroll-bob" width="13" height="13" viewBox="0 0 13 13" fill="none">
-        <path d="M6.5 1.5v8M3.5 7l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+    <div class="wrap hero-inner">
+      <div>
+        <p class="eyebrow">The Film Festival at Northwestern University</p>
+        <h1 class="display" id="hero-title">Get your tickets for the <img class="h1-logo" src="assets/img/nuff-logo-white.png" alt="NUFF" width="268" height="110"> film festival!</h1>
+        <p class="lead">NUFF is Northwestern's student-led short film festival, open to all filmmakers nationwide regardless of experience.</p>
+        <p class="hero-when"><span>November 13–14, 2026</span><span class="dot" aria-hidden="true"></span><span>Evanston, IL</span></p>
+        <div class="btn-row">
+          <a class="btn btn-primary" href="schedule/">View the Schedule</a>
+        </div>
+        <p class="hero-notice">2026 submissions are closed.</p>
+      </div>
+      <div class="hero-badge" aria-hidden="true">
+        <img src="assets/img/nuff-selection-white.png" alt="" width="300" height="300">
+        <p>Northwestern University</p>
+      </div>
     </div>
   </section>
 
-  <!-- ABOUT -->
-  <section id="about" aria-labelledby="about-title">
-    <div class="section-inner">
-      <p class="section-label reveal">&mdash; About NUFF</p>
-      <div class="reveal" style="margin-bottom: 32px; text-align: center;">
-        <img src="ombre-graphic.png" alt="The Film Festival at Northwestern University — NUFF" style="width:100%;max-width:860px;display:inline-block;" />
-      </div>
-      <h2 class="section-title reveal" id="about-title">Born out of the RTVF<br>community at Northwestern.</h2>
-      <div class="section-divider reveal"></div>
-      <div class="about-grid">
-        <div class="about-left">
-          <p class="reveal">NUFF is a student-led short film festival at Northwestern University open to all filmmakers nationwide, regardless of institutional affiliation or age. Started in 2024 as an internal event called NUFF Premiere Week, held on Northwestern's campus and led by students, the festival was created to celebrate the Radio/Television/Film (RTVF) community by showcasing student organization productions and the films from RTVF directing courses made throughout the year. This year, NUFF is expanding beyond Northwestern's walls and debuting as a full festival open to the public this Fall in Evanston, IL.</p>
-          <p class="reveal" style="transition-delay:0.1s">The festival will feature both NU and external screening blocks, as well as guest speakers, panel discussions, and networking opportunities with Chicago filmmakers and Northwestern alumni in the entertainment industry.</p>
-          <p class="reveal" style="transition-delay:0.2s">Selected films will have the opportunity to screen on campus and are eligible to compete for the Audience Choice Award, Best of Festival, Best of NU, Best Directing, Best Cinematography, Best Editing, and Best Screenplay.</p>
+  <section class="section" id="about" aria-labelledby="about-title">
+    <div class="wrap">
+      <picture class="reveal">
+        <source type="image/webp" srcset="assets/img/ombre-graphic-1400.webp">
+        <img class="about-graphic" src="assets/img/ombre-graphic-1400.png" alt="The Film Festival at Northwestern University" width="1400" height="195" loading="lazy" decoding="async">
+      </picture>
+      <div class="split">
+        <div class="reveal">
+          <p class="eyebrow">About NUFF</p>
+          <h2 class="h2" id="about-title">Born out of the RTVF community at Northwestern.</h2>
         </div>
-        <div class="about-right">
-          <div class="about-stat reveal" style="transition-delay:0.08s">
-            <div class="about-stat-num">2</div>
-            <div class="about-stat-text"><strong>Days of Screenings</strong>NU and external screening blocks. November 13&ndash;14, 2026.</div>
-          </div>
-          <div class="about-stat reveal" style="transition-delay:0.16s">
-            <div class="about-stat-num">7</div>
-            <div class="about-stat-text"><strong>Award Categories</strong>Plus additional prizes from sponsors, to be announced.</div>
-          </div>
-          <div class="about-stat reveal" style="transition-delay:0.24s">
-            <div class="about-stat-num">All</div>
-            <div class="about-stat-text"><strong>Open Nationwide</strong>All filmmakers welcome, regardless of level or institution.</div>
-          </div>
+        <div class="about-copy reveal" style="--i:1">
+          <p>NUFF is a student-led short film festival at Northwestern University open to all filmmakers nationwide, regardless of institutional affiliation or age. Started in 2024 as an internal event called NUFF Premiere Week, held on Northwestern's campus and led by students, the festival was created to celebrate the Radio/Television/Film (RTVF) community by showcasing student organization productions and the films from RTVF directing courses made throughout the year. This year, NUFF is expanding beyond Northwestern's walls and debuting as a full festival open to the public this Fall in Evanston, IL.</p>
+          <p>The festival will feature both NU and external screening blocks, as well as guest speakers, panel discussions, and networking opportunities with Chicago filmmakers and Northwestern alumni in the entertainment industry.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- AWARDS -->
-  <!-- SUBMIT -->
-  <section id="submit" aria-labelledby="submit-title">
-    <div class="section-inner">
-      <p class="section-label reveal">&mdash; Submit a Film</p>
-      <h2 class="section-title reveal" id="submit-title">Now accepting submissions for the<br>2026 <img src="nuff-logo.png" alt="NUFF" style="height:0.8em;filter:invert(1);vertical-align:middle;display:inline-block;margin-bottom:0.08em;" /> Film Festival</h2>
-      <div class="section-divider reveal"></div>
-      <!-- CUSTOMIZATION: set FILMFREEWAY_URL in the script block below -->
-      <div class="submit-cta-center reveal">
-        <div class="btn-submit-wrap">
-          <a href="#" onclick="handleSubmit(this); return false;" style="display:inline-block;border-radius:10px;overflow:hidden;transition:opacity 0.2s,transform 0.15s;box-shadow:0 4px 24px rgba(155,107,181,0.3);" onmouseover="this.style.opacity='0.85';this.style.transform='translateY(-2px)'" onmouseout="this.style.opacity='1';this.style.transform='translateY(0)'">
-            <img src="filmfreeway.png" alt="Submit on FilmFreeway" style="height:auto;width:100%;display:block;" />
-          </a>
+  <section class="section" aria-labelledby="sched-title">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="reveal">
+          <p class="eyebrow">Festival Schedule</p>
+          <h2 class="h2" id="sched-title">Annie May Swift Auditorium</h2>
         </div>
-        <!-- CUSTOMIZATION: update contact email -->
+        <a class="link-arrow reveal" href="schedule/">View Full Schedule</a>
       </div>
-
-      <div class="submit-grid">
-
-        <!-- LEFT: details -->
-        <div class="submit-left">
-          <ul class="submit-details">
-            <li class="reveal">
-              <div class="detail-icon">
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <rect x="2" y="3" width="14" height="13" rx="2"/><path d="M2 7h14M6 1v4M12 1v4"/>
-                </svg>
-              </div>
-              <div class="detail-body">
-                <span class="detail-label">Festival Dates</span>
-                <span class="detail-text">November 13&ndash;14, 2026<br><small>Times announced closer to the festival</small></span>
-              </div>
-            </li>
-            <li class="reveal" style="transition-delay:0.06s">
-              <div class="detail-icon">
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M9 1C6.24 1 4 3.24 4 6c0 4 5 11 5 11s5-7 5-11c0-2.76-2.24-5-5-5z"/><circle cx="9" cy="6" r="1.8"/>
-                </svg>
-              </div>
-              <div class="detail-body">
-                <span class="detail-label">Venue</span>
-                <span class="detail-text">Screenings across Northwestern's campus<br><small>Evanston, IL &mdash; specific venues announced closer to the festival</small></span>
-              </div>
-            </li>
-            <li class="reveal" style="transition-delay:0.12s">
-              <div class="detail-icon">
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <rect x="1" y="5" width="16" height="10" rx="1.5"/><path d="M5 5V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v1"/><path d="M6 11l1.5-1.5L9 11l1.5-1.5L12 11"/>
-                </svg>
-              </div>
-              <div class="detail-body">
-                <span class="detail-label">Awards</span>
-                <span class="detail-text">Selected films will be screened and awards given for Best Directing, Cinematography, Editing, Screenplay, and more.<br><small><a href="http://mailer.filmfreeway.com/ls/click?upn=u001.kmC4Z6WNB3NBlOY-2B2fYA86qeDkJIskXsGgjOCBzYkr87wzeAkOf78hbdUrdzfKz0uU2y_fIJrnIU2uEHO-2F6FDwDp9knQazkQxJ6hpG7OAVOEFz9Tr0dgFnAbuIxHE9gnFXrmmSKY2A8zUx2H4MtqGieUr4TKpPlEzKdo3opGX986f3BFLf2OTa4oODbIeK1KS5bt2sATDq4ucbqbCQ0bWw6h8FqvM8rRwevhJdxKTlNJHcp0IkVtXfBXqv52jsM6wdO0fu8kcBUgSZL-2BsqYDIteEYoA-3D-3D" target="_blank" style="color:var(--teal);">Learn more about categories and rules &rarr;</a></small></span>
-              </div>
-            </li>
-            <li class="reveal" style="transition-delay:0.18s">
-              <div class="detail-icon">
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <rect x="1" y="4" width="16" height="11" rx="1.5"/><path d="M1 7l8 5 8-5"/>
-                </svg>
-              </div>
-              <div class="detail-body">
-                <span class="detail-label">Submission Fee</span>
-                <span class="detail-text">
-                  Early Bird (by Aug 1): <strong>Free</strong><br>
-                  Regular (by Sep 14): <strong>$3</strong><br>
-                  Late (by Oct 7): <strong>$5</strong><br>
-                  <small>Fee waivers available. Email <a href="mailto:nuff.filmfestival@gmail.com">nuff.filmfestival@gmail.com</a></small>
-                </span>
-              </div>
-            </li>
-            <li class="reveal" style="transition-delay:0.24s">
-              <div class="detail-icon">
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <circle cx="9" cy="9" r="7.5"/><path d="M9 5.5v4l2.5 2.5"/>
-                </svg>
-              </div>
-              <div class="detail-body">
-                <span class="detail-label">Submissions Open</span>
-                <span class="detail-text">Opens July 1, 2026. Late deadline Oct 7, 2026.<br><small>Rolling review. Submit early for best consideration and lowest fee.</small></span>
-              </div>
-            </li>
-          </ul>
-        </div>
-
-        <!-- RIGHT: eligibility panel (JS tilt) -->
-        <div class="submit-right" id="eligibility">
-          <p class="elig-header reveal">Eligibility</p>
-
-          <div class="elig-row reveal" style="transition-delay:0.05s">
-            <p class="elig-row-title">Open to All</p>
-            <p class="elig-row-body">NUFF is open to all filmmakers nationwide. No institutional affiliation required, regardless of level.</p>
-          </div>
-          <div class="elig-row reveal" style="transition-delay:0.10s">
-            <p class="elig-row-title">Short Films Only</p>
-            <p class="elig-row-body">Films must be 20 minutes or under, including credits. No exceptions.</p>
-          </div>
-          <div class="elig-row reveal" style="transition-delay:0.15s">
-            <p class="elig-row-title">Production Window</p>
-            <p class="elig-row-body">Films must have finished production on or after August 1, 2023. Films completed prior to this date will not be accepted.</p>
-          </div>
-          <div class="elig-row reveal" style="transition-delay:0.20s">
-            <p class="elig-row-title">Language</p>
-            <p class="elig-row-body">All films must be accessible to an English-speaking audience. Subtitles are required for non-English films.</p>
-          </div>
-          <div class="elig-row reveal" style="transition-delay:0.23s">
-            <p class="elig-row-title">No Premiere Requirements</p>
-            <p class="elig-row-body">Films that have screened at other festivals or online (Vimeo, YouTube, etc.) are still eligible.</p>
-          </div>
-          <!-- CUSTOMIZATION: update contact email -->
-          <div class="elig-not-sure reveal" style="transition-delay:0.26s">
-            Email <a href="mailto:nuff.filmfestival@gmail.com">nuff.filmfestival@gmail.com</a> for any questions or concerns.
-          </div>
-        </div>
-
-      </div><!-- /.submit-grid -->
-
-      <!-- FAQ — native details/summary, pure CSS accordion -->
-      <div class="faq-wrap reveal">
-        <h3 class="faq-heading">Frequently asked questions</h3>
-        <div class="faq-list">
-
-          <details class="faq-item">
-            <summary class="faq-q">Is there a submission fee?<span class="faq-chevron" aria-hidden="true">+</span></summary>
-            <div class="faq-a">Fees are tiered by deadline. Submit by August 1 for <strong>free</strong>, by September 14 for <strong>$3</strong>, or by October 7 for <strong>$5</strong>. You can submit multiple films but each one requires its own fee. Need a waiver? Email us at <a href="mailto:nuff.filmfestival@gmail.com">nuff.filmfestival@gmail.com</a>.</div>
-          </details>
-
-          <details class="faq-item">
-            <summary class="faq-q">How does selection work?<span class="faq-chevron" aria-hidden="true">+</span></summary>
-            <div class="faq-a">We review submissions on a rolling basis and notify filmmakers by email. Getting in guarantees your film will be screened on campus. It does not guarantee an award. Awards are decided by a jury of industry professionals.</div>
-          </details>
-
-          <details class="faq-item">
-            <summary class="faq-q">Can I make changes after submitting?<span class="faq-chevron" aria-hidden="true">+</span></summary>
-            <div class="faq-a">No. Once your film is submitted, changes to the content or materials are not allowed.</div>
-          </details>
-
-        </div>
+      <div class="preview-days">
+      <article class="preview-day glass-flat reveal" style="--i:0">
+        <h3><span class="date-num">13</span><span class="date-txt">Friday<small>November 13, 2026</small></span></h3>
+        <ol class="mini-agenda">
+          <li><time>6:00 PM</time><span>Kickoff</span></li>
+          <li><time>6:00 PM</time><span>Block 1 (Live-Action Narrative Pt.1)</span></li>
+        </ol>
+      </article>
+      <article class="preview-day glass-flat reveal" style="--i:1">
+        <h3><span class="date-num">14</span><span class="date-txt">Saturday<small>November 14, 2026</small></span></h3>
+        <ol class="mini-agenda">
+          <li><time>11:30 AM</time><span>Lunch + Film Student Mixer</span></li>
+          <li><time>12:30 PM</time><span>Block 2 (Documentary/<wbr>Animation)</span></li>
+          <li><time>6:00 PM</time><span>Block 3 (Live-Action Narrative Pt.2)</span></li>
+          <li><time>7:45 PM</time><span>Chicago Filmmaking Panel + Closing Ceremony</span></li>
+        </ol>
+      </article>
       </div>
     </div>
   </section>
-
-  <!-- TEAM — CSS preserve-3d flip cards -->
-  <section id="team" aria-labelledby="team-title">
-    <div class="section-inner">
-      <p class="section-label reveal">&mdash; The Team</p>
-      <h2 class="section-title reveal" id="team-title">Behind the Film Festival.</h2>
-      <div class="section-divider reveal"></div>
-      <div class="team-grid">
-
-        <!-- Co-Presidents -->
-        <div class="team-card reveal" style="transition-delay:0.04s" aria-label="Abi Ariyo">
-          <div class="team-card-inner">
-            <div class="team-card-front"><img src="team/pres-log.png" alt="Abi Ariyo" loading="lazy" /></div>
-            <div class="team-card-back"><p class="team-card-back-name">Abi Ariyo</p><p class="team-card-role">Co-President, Logistics &amp; Ops</p></div>
-          </div>
-        </div>
-
-        <div class="team-card reveal" style="transition-delay:0.08s" aria-label="Aidan Venneman">
-          <div class="team-card-inner">
-            <div class="team-card-front"><img src="team/pres-creative.png" alt="Aidan Venneman" loading="lazy" /></div>
-            <div class="team-card-back"><p class="team-card-back-name">Aidan Venneman</p><p class="team-card-role">Co-President, Programming &amp; Creative</p></div>
-          </div>
-        </div>
-
-        <!-- Events & Finance -->
-        <div class="team-card reveal" style="transition-delay:0.04s" aria-label="Lily Wu">
-          <div class="team-card-inner">
-            <div class="team-card-front"><img src="team/events-coor.JPG" alt="Lily Wu" loading="lazy" /></div>
-            <div class="team-card-back"><p class="team-card-back-name">Lily Wu</p><p class="team-card-role">Events Coordinator &amp; Web Dev</p></div>
-          </div>
-        </div>
-
-        <div class="team-card reveal" style="transition-delay:0.06s" aria-label="Diego Mora">
-          <div class="team-card-inner">
-            <div class="team-card-front"><img src="team/finance.png" alt="Diego Mora" loading="lazy" /></div>
-            <div class="team-card-back"><p class="team-card-back-name">Diego Mora</p><p class="team-card-role">Finance Chair</p></div>
-          </div>
-        </div>
-
-        <!-- Programming -->
-        <div class="team-card reveal" style="transition-delay:0.09s" aria-label="Levi Gillis">
-          <div class="team-card-inner">
-            <div class="team-card-front"><img src="team/prog-2.png" alt="Levi Gillis" loading="lazy" /></div>
-            <div class="team-card-back"><p class="team-card-back-name">Levi Gillis</p><p class="team-card-role">Co-Chair, Programming</p></div>
-          </div>
-        </div>
-
-        <div class="team-card reveal" style="transition-delay:0.12s" aria-label="Jaimie Walsh">
-          <div class="team-card-inner">
-            <div class="team-card-front"><img src="team/prog-1.png" alt="Jaimie Walsh" loading="lazy" /></div>
-            <div class="team-card-back"><p class="team-card-back-name">Jaimie Walsh</p><p class="team-card-role">Co-Chair, Programming</p></div>
-          </div>
-        </div>
-
-        <!-- Marketing -->
-        <div class="team-card reveal" style="transition-delay:0.15s" aria-label="Henry Blocksidge">
-          <div class="team-card-inner">
-            <div class="team-card-front"><img src="team/marketing-1.png" alt="Henry Blocksidge" loading="lazy" /></div>
-            <div class="team-card-back"><p class="team-card-back-name">Henry Blocksidge</p><p class="team-card-role">Co-Chair, Marketing</p></div>
-          </div>
-        </div>
-
-        <div class="team-card reveal" style="transition-delay:0.18s" aria-label="Emma Kuhlman">
-          <div class="team-card-inner">
-            <div class="team-card-front"><img src="team/marketing-2.JPG" alt="Emma Kuhlman" loading="lazy" /></div>
-            <div class="team-card-back"><p class="team-card-back-name">Emma Kuhlman</p><p class="team-card-role">Co-Chair, Marketing</p></div>
-          </div>
-        </div>
-
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="assets/img/nuff-logo-white.png" alt="NUFF" width="73" height="30" loading="lazy">
+        <p>A student-led short film festival at Northwestern University, open to all filmmakers nationwide. Debuting Fall 2026 in Evanston, IL.</p>
+        <a class="btn btn-ghost btn-small" href="https://instagram.com/nufilmfest" target="_blank" rel="noopener"><svg class="insta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg> Follow @nufilmfest</a>
+      </div>
+      <div class="footer-col">
+        <h2>Festival</h2>
+        <ul>
+          <li><a href="schedule/">Schedule</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="team/">Team</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>Contact</h2>
+        <ul>
+          <li><a href="mailto:nuff.filmfestival@gmail.com">Email us</a></li>
+          <li><a href="https://instagram.com/nufilmfest" target="_blank" rel="noopener">Instagram</a></li>
+        </ul>
       </div>
     </div>
-  </section>
-
-  <!-- SCHEDULE -->
-  <section id="schedule" aria-labelledby="schedule-title">
-    <div class="section-inner">
-      <p class="section-label reveal">&mdash; Festival Schedule</p>
-      <h2 class="section-title reveal" id="schedule-title">Two days of screenings<br>across Northwestern's campus.</h2>
-      <p class="reveal" style="color:var(--muted);font-size:15px;margin-top:12px;">Full schedule coming soon. Check back closer to the festival or follow us on <a href="https://instagram.com/nufilmfest" target="_blank" rel="noopener" style="color:var(--teal);">Instagram</a> for updates.</p>
-      <div class="section-divider reveal"></div>
-      <div class="schedule-grid">
-        <!-- Day One — confirmed -->
-        <div class="sched-day reveal">
-          <div class="sched-day-num">13</div>
-          <p class="sched-day-label">Day One</p>
-          <p class="sched-day-date">Thursday, November 13, 2026</p>
-          <div class="sched-venue">
-            <strong>McCormick Auditorium</strong>
-            Norris Student Center<br>Northwestern University, Evanston, IL<br>
-            <span class="sched-tbd">Details announced soon</span>
-          </div>
-          <div class="sched-times">
-            <div class="sched-time-row"><span class="sched-time-chip">TBD</span> Doors Open</div>
-            <div class="sched-time-row"><span class="sched-time-chip">TBD</span> Screening Begins</div>
-          </div>
-        </div>
-        <!-- Day Two — schedule TBD -->
-        <div class="sched-day reveal" style="transition-delay:0.1s">
-          <div class="sched-day-num">14</div>
-          <p class="sched-day-label">Day Two</p>
-          <p class="sched-day-date">Friday, November 14, 2026</p>
-          <div class="sched-venue">
-            <!-- CUSTOMIZATION: update Day Two venue when confirmed -->
-            <strong>Venue TBD</strong>
-            Northwestern University, Evanston, IL<br>
-            <span class="sched-tbd">Details announced soon</span>
-          </div>
-          <div class="sched-times">
-            <div class="sched-time-row"><span class="sched-time-chip">TBD</span> Doors Open</div>
-            <div class="sched-time-row"><span class="sched-time-chip">TBD</span> Screening + Awards</div>
-          </div>
-        </div>
-      </div>
-      <div class="sched-map reveal">
-        <iframe
-          src="https://maps.google.com/maps?q=Norris+Student+Center+1999+Campus+Dr+Evanston+IL+60208&output=embed"
-          title="Norris Student Center, Northwestern University"
-          allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-        </iframe>
-      </div>
-      <p class="sched-map-note reveal" style="transition-delay:0.06s">&#8593; McCormick Auditorium, Norris Student Center. Day One, November 13, 2026</p>
+    <div class="footer-bottom">
+      <p>© 2026 The Film Festival at Northwestern University</p>
+      <p>Northwestern University · Evanston, IL</p>
     </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer id="footer">
-    <div class="section-inner">
-      <div class="footer-top">
-        <div class="footer-brand">
-          <p class="footer-brand-title"><img src="nuff-logo.png" alt="NUFF" style="height:28px;filter:invert(1);display:inline-block;vertical-align:middle;" /></p>
-          <p>A student-led short film festival at Northwestern University, open to all filmmakers nationwide. Debuting Fall 2026 in Evanston, IL.</p>
-        </div>
-        <div class="footer-col">
-          <p class="footer-col-title">Festival</p>
-          <ul>
-            <li><a href="#submit">Submit a Film</a></li>
-            <li><a href="#schedule">Schedule</a></li>
-            <li><span style="font-family:'Arial',sans-serif;font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(240,236,228,0.3);cursor:default;">Past Screenings <span style="font-size:0.65rem;opacity:0.7;text-transform:none;letter-spacing:0;">coming soon</span></span></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <p class="footer-col-title">Info</p>
-          <ul>
-            <li><a href="#about">About NUFF</a></li>
-            <li><a href="#eligibility">Eligibility</a></li>
-            <li><a href="#team">Our Team</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <p class="footer-col-title">Contact</p>
-          <ul>
-            <li><a href="mailto:nuff.filmfestival@gmail.com">Email Us</a></li>
-            <li><a href="https://instagram.com/nufilmfest" target="_blank" rel="noopener">Instagram</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>&copy; 2026 The Film Festival at Northwestern University. All rights reserved.</p>
-        <p>Northwestern University &middot; Evanston, IL</p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- JAVASCRIPT — zero external dependencies -->
-  <script>
-    /* =====================================================
-       CUSTOMIZATION CONSTANTS — update before launch
-    ===================================================== */
-    /* CUSTOMIZATION: paste your FilmFreeway submission URL here */
-    const FILMFREEWAY_URL = 'http://mailer.filmfreeway.com/ls/click?upn=u001.kmC4Z6WNB3NBlOY-2B2fYA86qeDkJIskXsGgjOCBzYkr87wzeAkOf78hbdUrdzfKz0uU2y_fIJrnIU2uEHO-2F6FDwDp9knQazkQxJ6hpG7OAVOEFz9Tr0dgFnAbuIxHE9gnFXrmmSKY2A8zUx2H4MtqGieUr4TKpPlEzKdo3opGX986f3BFLf2OTa4oODbIeK1KS5bt2sATDq4ucbqbCQ0bWw6h8FqvM8rRwevhJdxKTlNJHcp0IkVtXfBXqv52jsM6wdO0fu8kcBUgSZL-2BsqYDIteEYoA-3D-3D';
-    /* CUSTOMIZATION: paste your contact email here */
-    const CONTACT_EMAIL = 'nuff.filmfestival@gmail.com';
-
-    /* Accessibility: reduced-motion check */
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    /* Scroll reveal via IntersectionObserver */
-    const revealObs = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); }
-      });
-    }, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
-    document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
-
-    /* =====================================================
-       HERO 3D SCENE
-       Pure CSS perspective + vanilla JS rAF loop.
-       No Three.js / WebGL / GSAP / Lenis / CDN.
-       Mouse drives rotateX/Y on .scene-stage.
-       Deeper elements (more negative translateZ) respond
-       less to the rotation, creating parallax depth.
-       Scroll adds subtle zoom + upward drift + content fade.
-    ===================================================== */
-    (function initHero() {
-      if (reducedMotion) return;
-      if (window.innerWidth < 768) return; // disable parallax on mobile for smooth scroll
-      const heroEl      = document.getElementById('hero');
-      const stage       = document.getElementById('sceneStage');
-      const heroContent = document.getElementById('heroContent');
-      const headline    = document.getElementById('heroHeadline');
-      if (!heroEl || !stage) return;
-
-      let targetRX = 0, targetRY = 0, currentRX = 0, currentRY = 0;
-      let heroH = heroEl.offsetHeight || window.innerHeight;
-      let scrollY = 0, rafId = null, heroVisible = true, dirty = true;
-      const LERP = 0.07;
-
-      // Cache hero height on resize only
-      window.addEventListener('resize', () => { heroH = heroEl.offsetHeight || window.innerHeight; }, { passive: true });
-
-      // Track scroll passively — no layout reads inside scroll handler
-      window.addEventListener('scroll', () => {
-        scrollY = window.scrollY;
-        heroVisible = scrollY < heroH;
-        dirty = true;
-        if (heroVisible && !rafId) rafId = requestAnimationFrame(tick);
-      }, { passive: true });
-
-      document.addEventListener('mousemove', (e) => {
-        if (!heroVisible) return;
-        const dx = (e.clientX / window.innerWidth)  * 2 - 1;
-        const dy = (e.clientY / window.innerHeight) * 2 - 1;
-        targetRY =  dx * 8;
-        targetRX = -dy * 6;
-        dirty = true;
-        if (!rafId) rafId = requestAnimationFrame(tick);
-      }, { passive: true });
-
-      heroEl.addEventListener('mousemove', (e) => {
-        if (!headline) return;
-        const r  = heroEl.getBoundingClientRect();
-        const dx = (e.clientX - (r.left + r.width  / 2)) / (r.width  / 2);
-        const dy = (e.clientY - (r.top  + r.height / 2)) / (r.height / 2);
-        headline.style.transform = 'perspective(900px) rotateY(' + (dx*5) + 'deg) rotateX(' + (-dy*5) + 'deg)';
-      }, { passive: true });
-
-      heroEl.addEventListener('mouseleave', () => {
-        targetRX = 0; targetRY = 0;
-        if (headline) headline.style.transform = '';
-        dirty = true;
-      });
-
-      function tick() {
-        rafId = null;
-        currentRX += (targetRX - currentRX) * LERP;
-        currentRY += (targetRY - currentRY) * LERP;
-        const scrollP = Math.min(1, scrollY / heroH);
-        const scaleV  = 1 + scrollP * 0.055;
-        const driftY  = scrollP * -30;
-        stage.style.transform =
-          'rotateX(' + currentRX.toFixed(2) + 'deg) ' +
-          'rotateY(' + currentRY.toFixed(2) + 'deg) ' +
-          'scale(' + scaleV.toFixed(3) + ') ' +
-          'translateY(' + driftY.toFixed(0) + 'px)';
-        if (heroContent) heroContent.style.opacity = Math.max(0, 1 - scrollP * 1.7).toFixed(2);
-        // Keep running only while there's visible motion
-        const stillMoving = Math.abs(targetRX - currentRX) > 0.01 || Math.abs(targetRY - currentRY) > 0.01;
-        if ((heroVisible && dirty) || stillMoving) {
-          dirty = false;
-          rafId = requestAnimationFrame(tick);
-        }
-      }
-      rafId = requestAnimationFrame(tick);
-    })();
-
-    /* =====================================================
-       CONFETTI + FILMFREEWAY BUTTON
-    ===================================================== */
-    const CONFETTI_COLORS = ['#9B6BB5','#1E9EAF','#F0B020','#E04545','#F08080','#4E2A84','#ffffff'];
-
-    function launchConfetti(anchor) {
-      const r = anchor.getBoundingClientRect();
-      const ox = r.left + r.width / 2, oy = r.top + r.height / 2;
-      for (let i = 0; i < 38; i++) {
-        const el = document.createElement('div');
-        el.className = 'confetti-piece';
-        const angle = Math.random() * Math.PI * 2;
-        const dist  = 60 + Math.random() * 150;
-        const tx    = Math.cos(angle) * dist;
-        const ty    = -(80 + Math.random() * 200);
-        const rot   = (Math.random() * 2 - 1) * 560;
-        el.style.cssText =
-          'left:' + ox + 'px;top:' + oy + 'px;' +
-          'background:' + CONFETTI_COLORS[i % CONFETTI_COLORS.length] + ';' +
-          'border-radius:' + (Math.random() > 0.45 ? '50%' : '2px') + ';' +
-          '--tx:' + tx.toFixed(0) + 'px;--ty:' + ty.toFixed(0) + 'px;--rot:' + rot.toFixed(0) + 'deg;' +
-          'animation-delay:' + (Math.random() * 0.15).toFixed(3) + 's;';
-        document.body.appendChild(el);
-        setTimeout(function(){ el.remove(); }, 1800);
-      }
-    }
-
-    function handleSubmit(btn) {
-      if (!reducedMotion) launchConfetti(btn);
-      setTimeout(function() {
-        /* CUSTOMIZATION: FILMFREEWAY_URL set at top of this script */
-        if (FILMFREEWAY_URL && FILMFREEWAY_URL !== '[FILMFREEWAY_LINK_HERE]') {
-          window.open(FILMFREEWAY_URL, '_blank', 'noopener,noreferrer');
-        } else {
-          alert('FilmFreeway URL not yet configured.\nUpdate FILMFREEWAY_URL in index.html.');
-        }
-      }, 520);
-    }
-
-    /* =====================================================
-       ELIGIBILITY CARD TILT
-       Cursor-based perspective tilt, max +-10 degrees.
-       CSS custom props --elig-rx/ry drive the transform;
-       --elig-mx/my shift the radial-gradient highlight.
-    ===================================================== */
-    (function initEligTilt() {
-      if (reducedMotion) return;
-      document.querySelectorAll('.elig-row').forEach(function(card) {
-        card.addEventListener('mousemove', function(e) {
-          const r  = card.getBoundingClientRect();
-          const dx = (e.clientX - (r.left + r.width  / 2)) / (r.width  / 2);
-          const dy = (e.clientY - (r.top  + r.height / 2)) / (r.height / 2);
-          card.style.setProperty('--elig-rx',  ( dy * 10).toFixed(2) + 'deg');
-          card.style.setProperty('--elig-ry',  (-dx * 10).toFixed(2) + 'deg');
-          card.style.setProperty('--elig-mx',  ( dx * 42).toFixed(1) + '%');
-          card.style.setProperty('--elig-my',  ( dy * 42).toFixed(1) + '%');
-        });
-        card.addEventListener('mouseleave', function() {
-          card.style.setProperty('--elig-rx', '0deg');
-          card.style.setProperty('--elig-ry', '0deg');
-          card.style.setProperty('--elig-mx', '0%');
-          card.style.setProperty('--elig-my', '0%');
-        });
-      });
-    })();
-  </script>
+  </div>
+</footer>
 </body>
 </html>

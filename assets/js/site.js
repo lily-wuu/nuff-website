@@ -5,9 +5,9 @@
    While a link is empty the button reads "Tickets TBD".
    ================================================================ */
 var TICKET_LINKS = {
-  'fri-evening':   '',  // Friday: Kickoff + Mixed Block 1
-  'sat-afternoon': '',  // Saturday: Lunch + Film Student Mixer + Doc / Animation Block
-  'sat-evening':   ''   // Saturday: Mixed Block 2 + Panel & Closing Ceremony
+  'fri-evening':   'https://www.eventbrite.com/e/2004157718687?aff=oddtdtcreator',  // Friday: Kickoff + Mixed Block 1
+  'sat-afternoon': 'https://www.eventbrite.com/e/2004157718687?aff=oddtdtcreator',  // Saturday: Lunch + Film Student Mixer + Doc / Animation Block
+  'sat-evening':   'https://www.eventbrite.com/e/2004157718687?aff=oddtdtcreator'   // Saturday: Mixed Block 2 + Panel & Closing Ceremony
 };
 
 (function () {

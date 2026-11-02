@@ -518,3 +518,10 @@ html:not(.js) .filters { display: none; }
 /* Centered ombre graphic */
 picture:has(> .about-graphic) { display: block; }
 .about-graphic { margin-left: auto; margin-right: auto; }
+
+/* ---------- Awards + sponsor ---------- */
+.awards-copy p { color: var(--muted); font-size: var(--fs-lead); line-height: 1.55; }
+.awards-copy ul { margin-top: 14px; padding-left: 1.2em; list-style: disc; }
+.awards-copy li { font-size: var(--fs-lead); line-height: 1.55; padding: 4px 0; }
+.awards-copy li::marker { color: var(--purple); }
+.sponsor-logo img { display: block; height: clamp(44px, 5vw, 66px); width: auto; }
